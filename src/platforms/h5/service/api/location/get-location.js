@@ -1,3 +1,39 @@
+/**
+ * 
+ * JS高程知识点
+ *  - navigator.geolocation
+ *  - JSONP
+ *    - 地图 JS Service API 请求
+ *    - 地图 JS 资源加载
+ * 
+ * 
+ * H5 获取定位的核心思路：
+ * - 尝试使用 navigator.geolocation.getCurrentPosition 获取定位
+ *  - 成功，返回定位信息
+ *       - 投放端场景
+ *          - 在 App WebView，打开H5页面，比如美团App中的企业点餐模块
+ *          - 在系统浏览器中，打开H5
+ *       - 权限
+ *          - GPS 是否开启
+ *          - App 获取GPS定位权限
+ *          - H5 获取定位权限
+ * 
+ *  - 失败，可调用服务端接口
+ *      - 服务端通过 request.IP，利用一些 IPGeo 库，在这些库里面检索，找到IP对应的城市/区县对应的经纬度（城市一般是能获取到的，区县待定，取决于是否氪金）
+ *      - 一般是返回省市区对应的政府所在位置的经纬度
+ * 
+ * 
+ * getLocation 整体思路：
+ * 
+ * 1. 尝试使用浏览器的 navigator.geolocation.getCurrentPosition 获取定位
+ * 2. 降级到使用腾讯地图 JS Service API 获取定位
+ * 3. 降级到使用Google地图 JS Service API 获取定位
+ * 4. 降级到使用高德地图 JS Service API 获取定位
+ * 
+ * 2、3、4 对应的JS Service API 的核心技术实现：其实也是类似上面的核心思路：即腾讯/Google/高德 根据请求的IP去获取对应的省市区，然后找到这个省市区对应的经纬度
+ * 
+ * 
+ */
 import {
   getJSONP
 } from '../../../helpers/get-jsonp'
@@ -28,6 +64,7 @@ export function getLocation ({
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(res => resolve({ coords: res.coords }), reject, {
         enableHighAccuracy: isHighAccuracy || altitude,
+        // 比较有意思的一个case，如果APP端没有获取定位权限，H5可能会长时间等待
         timeout: highAccuracyExpireTime || 1000 * 100
       })
     } else {
