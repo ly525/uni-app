@@ -29,6 +29,8 @@ require('./lib/check-update')()
 const initBuildCommand = require('./commands/build')
 const initServeCommand = require('./commands/serve')
 
+// api 为 vue-cli-service 实例，PluginAPI {id: '@dcloudio/vue-cli-plugin-uni', service: Service}
+// options 为 vue.config.js 导出的对象
 module.exports = (api, options) => {
   initServeCommand(api, options)
 

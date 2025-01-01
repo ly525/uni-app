@@ -68,6 +68,36 @@ module.exports = function initOptions (options) {
   // sass 全局变量
   const isSass = fs.existsSync(path.resolve(process.env.UNI_INPUT_DIR, 'uni.sass'))
   const isScss = fs.existsSync(path.resolve(process.env.UNI_INPUT_DIR, 'uni.scss'))
+  /**
+   * 注意在 src/uni.scss 中如果需要 @import 其他 scss 文件，尽量使用@路径别名进行引用，如 @import "@/common.scss";
+   * 避免遇到再注入到其它 scss 文件的时候，相对路径识别找不到的问题（Error: Cannot find module in xxx.vue?type=style）
+   * 
+   * https://zh.uniapp.dcloud.io/component/uniui/uni-sass.html
+   * https://uniapp.dcloud.net.cn/collocation/uni-scss.html
+   * https://blog.csdn.net/qq_36604536/article/details/124256300
+   * 
+   * 这边其实是读取uni-app内置的全局 sass/scss 变量，然后再加上用户自定义的全局 sass/scss 变量（在 uni.scss/uni.sass）
+   * 
+   * 最后生成的 options 如下:
+      {
+        ...config,
+        css: {
+          loaderOptions: {
+            sass: {
+              sassOptions: {
+                outputStyle: 'expanded'
+              },
+              // 这回被注入到工程的每一个 scss 文件或者 vue文件的<style lang="scss/sass"> 中
+              prependData: `
+                $uni-color-primary: #007aff;
+                ...等等
+                @import "@/uni.scss"; // 自定义的全局 sass 变量
+              `
+            }
+        }
+      }
+   */
+  
   let sassData = isSass ? getPlatformSass() : getPlatformScss()
 
   if (isSass) {
