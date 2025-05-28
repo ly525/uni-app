@@ -40,6 +40,13 @@
 </template>
 
 <script>
+/**
+ * 地图组件：https://uniapp.dcloud.net.cn/component/map.html
+ * 
+ * 整体原理：该组件在 mounted 去加载地图(loadMaps)，会根据 manifest.json 加载地图 SDK（高德、腾讯、谷歌），然后创建地图实例，最后通过地图实例来实现地图的各种功能。
+ * 
+ * 
+ */
 import {
   subscriber
 } from 'uni-mixins'

@@ -14,6 +14,8 @@ export const MapType = {
 }
 
 export function getMapInfo () {
+  // __uniConfig 是在编译时注入的配置对象，可以理解成 uniapp 的manifest.json
+  // 具体的配置项可以参考 https://uniapp.dcloud.io/uniCloud/uniCloud?id=uni-config
   if (__uniConfig.qqMapKey) {
     return {
       type: MapType.QQ,
